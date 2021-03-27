@@ -38,10 +38,21 @@ This is an in-progress project. These are the TODO items:
   * Note: I can find a couple somewhat populate Docker images from Docker but they are 2 and 4+ years old. Hadoop does
     not provide an official one. So, we will make our own. Download Hadoop, copy into a Debian (maybe?) Docker image
     and hope for the best.
+* DONE Extend AdopOpenJDK Docker image instead of plain Debian because we need Java for Hadoop (of course!)
 * Run `hdfs` in the Docker container
 * Do the "hello world" of Hadoop examples
   * I think this is the "grep" example touted on the official docs (see the *Hadoop: Setting up a Single Node Cluster.*
     link below)
+
+## Notes
+
+* Jump into a Bash shell session in a container of the custom Docker image and explore. Use an alias!
+    * ```
+      alias doBash="docker run --rm -it --entrypoint bash hadoop-playground"
+      doBash
+      ```
+* Inspect the custom image (useful for debugging when experimenting with the "ENTRYPOINT"):
+    * `docker inspect hadoop-playground | jq`
 
 ## Wish List
 
