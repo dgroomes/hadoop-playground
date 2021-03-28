@@ -35,14 +35,17 @@ personal computer.
 This is an in-progress project. These are the TODO items:
 
 * DONE Scaffold a Hadoop Docker image.
-  * Note: I can find a couple somewhat populate Docker images from Docker but they are 2 and 4+ years old. Hadoop does
+  * UPDATE: nevermind, I found a great open source Hadoop-in-Docker project: [docker-hadoop](https://github.com/big-data-europe/docker-hadoop)
+    ~~Note: I can find a couple somewhat populate Docker images from Docker but they are 2 and 4+ years old. Hadoop does
     not provide an official one. So, we will make our own. Download Hadoop, copy into a Debian (maybe?) Docker image
-    and hope for the best.
+    and hope for the best.~~
 * DONE Extend AdopOpenJDK Docker image instead of plain Debian because we need Java for Hadoop (of course!)
-* Run `hdfs` in the Docker container
+* SKIP Run `hdfs` in the Docker container
 * Do the "hello world" of Hadoop examples
   * I think this is the "grep" example touted on the official docs (see the *Hadoop: Setting up a Single Node Cluster.*
     link below)
+* Use [docker-hadoop](https://github.com/big-data-europe/docker-hadoop) as a Git sub-module. This means we don't have to
+  figure out how to put Hadoop in Docker! 
 
 ## Notes
 
@@ -53,6 +56,8 @@ This is an in-progress project. These are the TODO items:
       ```
 * Inspect the custom image (useful for debugging when experimenting with the "ENTRYPOINT"):
     * `docker inspect hadoop-playground | jq`
+* From Hadoop docs:
+    * > In general, it is recommended that HDFS and YARN run as separate users. In the majority of installations, HDFS processes execute as ‘hdfs’. YARN is typically using the ‘yarn’ account.
 
 ## Wish List
 
@@ -69,4 +74,6 @@ General clean-ups, changes and things I wish to implement for this project:
 
 * [Hadoop official site: *Hadoop: Setting up a Single Node Cluster*](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html)
 * [Hadoop official site: *Download*](https://hadoop.apache.org/releases.html)
+* [Hadoop official site: *Hadoop Cluster Setup*](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html)
 * [Docker official site: *Run multiple services in a container*](https://docs.docker.com/config/containers/multi-service_container/)
+* [Hadoop-in-Docker project `big-data-europe/docker-hadoop`](https://github.com/big-data-europe/docker-hadoop)
