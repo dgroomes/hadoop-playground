@@ -16,10 +16,10 @@ the rescue. We can use Docker containers to virtualize computers and create a di
 personal computer. There is an open source project for running Hadoop in Docker: [`docker-hadoop`](https://github.com/big-data-europe/docker-hadoop).
 This project uses `docker-hadoop` via a Git sub-module.
 
-1. Clone the `docker-hadoop` repository sub-module
-   * `TODO`
+1. Initialize the `docker-hadoop` Git sub-module
+   * `git submodule update --init`
 1. Start the Hadoop Docker containers
-   * `TODO`
+   * `docker-compose --project-directory docker-hadoop up`
 1. Execute a simple MapReduce job:
    * `TODO`
 
