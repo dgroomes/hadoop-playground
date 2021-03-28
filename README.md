@@ -13,20 +13,13 @@ NOT YET IMPLEMENTED
 This project makes use of Docker. Hadoop is a framework for distributed computing. As such, it's necessary to simulate
 a distributed computing environment in order to effectively learn and explore Hadoop in its natural form. So, Docker to
 the rescue. We can use Docker containers to virtualize computers and create a distributed environment all on our own
-personal computer.
+personal computer. There is an open source project for running Hadoop in Docker: [`docker-hadoop`](https://github.com/big-data-europe/docker-hadoop).
+This project uses `docker-hadoop` via a Git sub-module.
 
-1. *Manually* download the Hadoop distribution:
-    1. Follow download instructions on the [Hadoop download page](https://hadoop.apache.org/releases.html)
-    1. Extract it with something likg:
-       * `tar -xf hadoop-3.2.2.tar.gz`
-    1. Create a directory named `tmp/`
-    1. Move the downloaded and unzipped directory into `tmp/` and name it simply `hadoop` (you would have downloaded it
-    1. Move the downloaded and unzipped directory into `tmp/` and name it simply `hadoop` (you would have downloaded it
-       and extracted to a name like `hadoop-3.2.2`). It should look like this: `tmp/hadoop`.
-1. Build the Hadoop Docker image:
-   * `./build.sh`
-1. Start the Hadoop Docker containers:
-   * `docker run --rm hadoop-playground`
+1. Clone the `docker-hadoop` repository sub-module
+   * `TODO`
+1. Start the Hadoop Docker containers
+   * `TODO`
 1. Execute a simple MapReduce job:
    * `TODO`
 
@@ -34,30 +27,11 @@ personal computer.
 
 This is an in-progress project. These are the TODO items:
 
-* DONE Scaffold a Hadoop Docker image.
-  * UPDATE: nevermind, I found a great open source Hadoop-in-Docker project: [docker-hadoop](https://github.com/big-data-europe/docker-hadoop)
-    ~~Note: I can find a couple somewhat populate Docker images from Docker but they are 2 and 4+ years old. Hadoop does
-    not provide an official one. So, we will make our own. Download Hadoop, copy into a Debian (maybe?) Docker image
-    and hope for the best.~~
-* DONE Extend AdopOpenJDK Docker image instead of plain Debian because we need Java for Hadoop (of course!)
-* SKIP Run `hdfs` in the Docker container
 * Do the "hello world" of Hadoop examples
   * I think this is the "grep" example touted on the official docs (see the *Hadoop: Setting up a Single Node Cluster.*
     link below)
-* Use [docker-hadoop](https://github.com/big-data-europe/docker-hadoop) as a Git sub-module. This means we don't have to
+* IN PROGRESS Use [docker-hadoop](https://github.com/big-data-europe/docker-hadoop) as a Git sub-module. This means we don't have to
   figure out how to put Hadoop in Docker! 
-
-## Notes
-
-* Jump into a Bash shell session in a container of the custom Docker image and explore. Use an alias!
-    * ```
-      alias doBash="docker run --rm -it --entrypoint bash hadoop-playground"
-      doBash
-      ```
-* Inspect the custom image (useful for debugging when experimenting with the "ENTRYPOINT"):
-    * `docker inspect hadoop-playground | jq`
-* From Hadoop docs:
-    * > In general, it is recommended that HDFS and YARN run as separate users. In the majority of installations, HDFS processes execute as ‘hdfs’. YARN is typically using the ‘yarn’ account.
 
 ## Wish List
 
@@ -68,7 +42,6 @@ General clean-ups, changes and things I wish to implement for this project:
 * Sprinkle in Oozie for scheduling
 * Figure out secrets management.
   * I.e. figure out passwords files, file permissions and the "CredentialProvider" thing.
-
     
 ## Reference Materials
 
