@@ -18,8 +18,18 @@ This project uses `docker-hadoop` via a Git sub-module.
 
 1. Initialize the `docker-hadoop` Git sub-module
    * `git submodule update --init`
-1. Start the Hadoop Docker containers
-   * `docker-compose --project-directory docker-hadoop up`
+1. Start the "namenode" Hadoop Docker container
+   * `docker compose --project-directory docker-hadoop up --detach namenode`
+   * Continually run `docker container ls` until the container "STATUS" shows "healthy"
+1. Perform the inaugural HDFS format operation
+   * Why? From the [*Hadoop Cluster Setup*](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html) docs:
+     > The first time you bring up HDFS, it must be formatted. 
+   * Jump into a Bash session in the container with: `docker exec -it namenode bash`
+   * In the container execute: `$HADOOP_HOME/bin/hdfs namenode -format`
+   * It will prompt for a "Y/n". Answer the prompt.
+   * Confirm that you see a "SUCCESS" message
+1. Start the rest of the Docker containers:
+   * `docker compose --project-directory docker-hadoop up --detach`
 1. Execute a simple MapReduce job:
    * `TODO`
 
@@ -27,12 +37,18 @@ This project uses `docker-hadoop` via a Git sub-module.
 
 This is an in-progress project. These are the TODO items:
 
-* Do the "hello world" of Hadoop examples
-  * I think this is the "grep" example touted on the official docs (see the *Hadoop: Setting up a Single Node Cluster.*
-    link below)
-* IN PROGRESS Use [docker-hadoop](https://github.com/big-data-europe/docker-hadoop) as a Git sub-module. This means we don't have to
+* IN PROGRESS Do the "hello world" of Hadoop examples
+  * Do the "WordCount" example detailed in [the Hadoop docs](https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html#Example:_WordCount_v1.0)
+* DONE Use [docker-hadoop](https://github.com/big-data-europe/docker-hadoop) as a Git sub-module. This means we don't have to
   figure out how to put Hadoop in Docker! 
+  
+## Notes
 
+* Jump into a Bash shell session in one of the Hadoop Docker containers explore. Use an alias, too!
+    * ```
+      alias doBash="docker exec -it resourcemanager bash"
+      doBash
+      ```
 ## Wish List
 
 General clean-ups, changes and things I wish to implement for this project:
@@ -48,5 +64,7 @@ General clean-ups, changes and things I wish to implement for this project:
 * [Hadoop official site: *Hadoop: Setting up a Single Node Cluster*](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html)
 * [Hadoop official site: *Download*](https://hadoop.apache.org/releases.html)
 * [Hadoop official site: *Hadoop Cluster Setup*](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html)
+* [Hadoop official site: *Apache Hadoop Downstream Developer’s Guide*](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/DownstreamDev.html)
+  * A starting point for developing a program that runs in Hadoop 
 * [Docker official site: *Run multiple services in a container*](https://docs.docker.com/config/containers/multi-service_container/)
 * [Hadoop-in-Docker project `big-data-europe/docker-hadoop`](https://github.com/big-data-europe/docker-hadoop)
