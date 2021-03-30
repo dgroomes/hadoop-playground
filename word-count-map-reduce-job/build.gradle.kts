@@ -6,6 +6,12 @@ repositories {
     mavenCentral()
 }
 
+java {
+    // Hadoop uses Java 8 so our MapReduce job will too
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 val hadoopVersion = "3.2.1"
 
 dependencies {

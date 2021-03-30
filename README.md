@@ -1,7 +1,5 @@
 # hadoop-playground
 
-NOT YET FULLY IMPLEMENTED
-
 📚 Learning and exploring core Apache Hadoop and its surrounding ecosystem.
 
 > The Apache™ Hadoop® project develops open-source software for reliable, scalable, distributed computing.
@@ -21,6 +19,16 @@ the rescue. We can use Docker containers to virtualize computers and create a di
 personal computer. There is an open source project for running Hadoop in Docker: [`docker-hadoop`](https://github.com/big-data-europe/docker-hadoop).
 This project uses `docker-hadoop` via a Git sub-module.
 
+---
+**WARNING**: I've experienced significant slowness with the cluster. The terminal will block for a while (10+ seconds)
+for a simple operation like `-ls` or `-put` to complete. And the "WordCount" job takes around 2 minutes to execute!
+It might be a file system issue because of the combo of an M1 mac with Docker... I'm not sure. I've added the `time`
+command in most cases to illustrate how long the commands take.
+
+Also, the instances themselves are flaky. For example, "historyserver" became unhealthy when I didn't even execute any jobs.
+
+---
+
 1. Initialize the `docker-hadoop` Git sub-module
    * `git submodule update --init`
 1. Destroy old volumes
@@ -37,11 +45,11 @@ This project uses `docker-hadoop` via a Git sub-module.
    * Why? From the [*Hadoop Cluster Setup*](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html) docs:
      > The first time you bring up HDFS, it must be formatted.
    * `docker exec -it namenode bash -c 'hdfs namenode -format'`
-   * It will prompt for a "Y/n". Answer the prompt.
-   * Confirm that you see the message in the last 10 lines of output:
+   * It will prompt for a "Y/N". Answer the prompt.
+   * Confirm that you see this message in the last 10 lines of output:
      > Storage directory /hadoop/dfs/name has been successfully formatted
 1. Start the "datanode" container:
-   * Why? https://github.com/big-data-europe/docker-hadoop/issues/3
+   * Why? To [handle race conditions](https://github.com/big-data-europe/docker-hadoop/issues/3).
    * `docker-compose --project-directory docker-hadoop up --detach datanode`
    * Continually run `docker container ls` until the container "STATUS" shows "healthy"
 1. Start the rest of the Docker containers:
@@ -51,30 +59,36 @@ This project uses `docker-hadoop` via a Git sub-module.
    * This is taken from the official [Hadoop WordCount example](https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html#Example:_WordCount_v1.0)
    * ```
      docker cp word-count-map-reduce-job/data/input/file01.txt namenode:/
-     docker exec namenode bash -c 'hadoop fs -put file01.txt /'
-     docker exec namenode bash -c 'rm file01.txt'
      docker cp word-count-map-reduce-job/data/input/file02.txt namenode:/
-     docker exec namenode bash -c 'hadoop fs -put file02.txt /'
+     
+     time docker exec namenode bash -c 'hadoop fs -mkdir /input'
+     time docker exec namenode bash -c 'hadoop fs -put file01.txt /input'
+     time docker exec namenode bash -c 'hadoop fs -put file02.txt /input'
+     
+     docker exec namenode bash -c 'rm file01.txt'
      docker exec namenode bash -c 'rm file02.txt'
      ```
 1. Build a "WordCount" MapReduce job:
    * `./gradlew word-count-map-reduce-job:jar`
    * Note: A MapReduce "job" can take on many forms. For this project, it takes the form of a Java `.jar` file. The other
-     forms are out-of-scope for this playground repo. For example, a MapReduce job can be written in Python.  
-1. Submit the job to the Hadoop cluster to be executed:
-   * `TODO`
-1. Wait for completion and verify the results:
-   * `TODO`
+     forms are out-of-scope for this playground repo. For example, a MapReduce job can be written in Python.
+1. Copy the jar to the Hadoop cluster and submit the job for execution:
+   * ```
+     docker cp word-count-map-reduce-job/build/libs/word-count-map-reduce-job.jar namenode:/
+     time docker exec -it namenode bash -c 'hadoop jar word-count-map-reduce-job.jar dgroomes.WordCount /input /output'
+     ```
+   * Wait patiently for it to complete
+1. Verify the output results:
+   * `time docker exec -it namenode bash -c 'hadoop fs -cat /output/part-r-00000'`
+   * It should look something like this:
+     ```
+     Bye        1
+     Goodbye    1
+     Hadoop     2
+     Hello      2
+     World      2
+     ```
 
-## TODO
-
-This is an in-progress project. These are the TODO items:
-
-* IN PROGRESS Do the "hello world" of Hadoop examples
-  * Do the "WordCount" example detailed in [the Hadoop docs](https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html#Example:_WordCount_v1.0)
-* DONE Use [docker-hadoop](https://github.com/big-data-europe/docker-hadoop) as a Git sub-module. This means we don't have to
-  figure out how to put Hadoop in Docker!
-  
 ## Notes
 
 * Jump into a Bash shell session in one of the Hadoop Docker containers explore. Use an alias, too!
@@ -86,6 +100,9 @@ This is an in-progress project. These are the TODO items:
 
 General clean-ups, changes and things I wish to implement for this project:
 
+* Explose the ResourceManager port to the host (port 8088)
+  * I'm not exactly sure how to do this because I don't want to make source file changes to `docker-hadoop`. Layer in an
+    *override* `docker-compose.yml` somehow?  
 * Sprinkle in Yarn somehow
   * Or is Yarn just implicitly there anyway if I run a Map Reduce job?
 * Sprinkle in Oozie for scheduling
