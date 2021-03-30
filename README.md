@@ -1,6 +1,6 @@
 # hadoop-playground
 
-NOT YET IMPLEMENTED
+NOT YET FULLY IMPLEMENTED
 
 📚 Learning and exploring core Apache Hadoop and its surrounding ecosystem.
 
@@ -30,7 +30,15 @@ This project uses `docker-hadoop` via a Git sub-module.
    * Confirm that you see a "SUCCESS" message
 1. Start the rest of the Docker containers:
    * `docker compose --project-directory docker-hadoop up --detach`
-1. Execute a simple MapReduce job:
+1. Set up some test data that will later be consumed by a MapReduce job:
+   * `TODO`
+1. Build a "WordCount" MapReduce job:
+   * `./gradlew word-count-map-reduce-job:jar`
+   * Note: A MapReduce "job" can take on many forms. For this project, it takes the form of a Java `.jar` file. The other
+     forms are out-of-scope for this playground repo. For example, a MapReduce job can be written in Python.  
+1. Submit the job to the Hadoop cluster to be executed:
+   * `TODO`
+1. Wait for completion and verify the results:
    * `TODO`
 
 ## TODO
@@ -40,7 +48,7 @@ This is an in-progress project. These are the TODO items:
 * IN PROGRESS Do the "hello world" of Hadoop examples
   * Do the "WordCount" example detailed in [the Hadoop docs](https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html#Example:_WordCount_v1.0)
 * DONE Use [docker-hadoop](https://github.com/big-data-europe/docker-hadoop) as a Git sub-module. This means we don't have to
-  figure out how to put Hadoop in Docker! 
+  figure out how to put Hadoop in Docker!
   
 ## Notes
 
@@ -58,6 +66,7 @@ General clean-ups, changes and things I wish to implement for this project:
 * Sprinkle in Oozie for scheduling
 * Figure out secrets management.
   * I.e. figure out passwords files, file permissions and the "CredentialProvider" thing.
+* Add a Spark example job
     
 ## Reference Materials
 
