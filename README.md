@@ -47,10 +47,15 @@ This project uses `docker-hadoop` via a Git sub-module.
 1. Start the rest of the Docker containers:
    * `docker-compose --project-directory docker-hadoop up --detach`
    * Continually run `docker container ls` until all containers show "healthy". It will take over one minute.
-1. WORK IN PROGRESS Set up some test data that will later be consumed by a MapReduce job:
+1. Set up some test data that will later be consumed by a MapReduce job:
+   * This is taken from the official [Hadoop WordCount example](https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html#Example:_WordCount_v1.0)
    * ```
      docker cp word-count-map-reduce-job/data/input/file01.txt namenode:/
-     docker exec -it namenode bash -c 'hadoop fs -put file01.txt /file01.txt'
+     docker exec namenode bash -c 'hadoop fs -put file01.txt /'
+     docker exec namenode bash -c 'rm file01.txt'
+     docker cp word-count-map-reduce-job/data/input/file02.txt namenode:/
+     docker exec namenode bash -c 'hadoop fs -put file02.txt /'
+     docker exec namenode bash -c 'rm file02.txt'
      ```
 1. Build a "WordCount" MapReduce job:
    * `./gradlew word-count-map-reduce-job:jar`
