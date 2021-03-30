@@ -25,7 +25,9 @@ for a simple operation like `-ls` or `-put` to complete. And the "WordCount" job
 It might be a file system issue because of the combo of an M1 mac with Docker... I'm not sure. I've added the `time`
 command in most cases to illustrate how long the commands take.
 
-Also, the instances themselves are flaky. For example, "historyserver" became unhealthy when I didn't even execute any jobs.
+Also, the instances themselves are flaky and it might be due to more than data corruption (see the later note about volumes).
+I think there are multiple race conditions and environmental problems. I've had each of "namenode", "datanode" and "historyserver"
+fail to become healthy. This is a frustrating experience!
 
 ---
 
@@ -53,7 +55,7 @@ Also, the instances themselves are flaky. For example, "historyserver" became un
    * `docker-compose --project-directory docker-hadoop up --detach datanode`
    * Continually run `docker container ls` until the container "STATUS" shows "healthy"
 1. Start the rest of the Docker containers:
-   * `docker-compose --project-directory docker-hadoop up --detach`
+   * `docker-compose --project-directory docker-hadoop -f docker-hadoop/docker-compose.yml -f docker-compose.override.yml up --detach resourcemanager nodemanager1 historyserver`
    * Continually run `docker container ls` until all containers show "healthy". It will take over one minute.
 1. Set up some test data that will later be consumed by a MapReduce job:
    * This is taken from the official [Hadoop WordCount example](https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html#Example:_WordCount_v1.0)
@@ -100,9 +102,12 @@ Also, the instances themselves are flaky. For example, "historyserver" became un
 
 General clean-ups, changes and things I wish to implement for this project:
 
-* Explose the ResourceManager port to the host (port 8088)
+* DONE Expose the ResourceManager port to the host (port 8088)
   * I'm not exactly sure how to do this because I don't want to make source file changes to `docker-hadoop`. Layer in an
-    *override* `docker-compose.yml` somehow?  
+    *override* `docker-compose.yml` somehow?
+* Reduce the memory limits. I think the containers are hogging memory but there isn't much given to Docker (well I mean 8GB
+  is kind of a lot...) so maybe it's paging to disk and being super slow. I would really like to make this thing faster
+  and more reliable. Memory is my best idea now, or trying on a non-M1 computer with stable Docker.
 * Sprinkle in Yarn somehow
   * Or is Yarn just implicitly there anyway if I run a Map Reduce job?
 * Sprinkle in Oozie for scheduling
