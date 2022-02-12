@@ -2,3 +2,4 @@
 tmp/
 .gradle/
 build/
+.DS_Store
